@@ -1,0 +1,68 @@
+PODS:
+  - Alamofire (4.9.1)
+  - Differentiator (3.1.0)
+  - Kingfisher (5.11.0):
+    - Kingfisher/Core (= 5.11.0)
+  - Kingfisher/Core (5.11.0)
+  - MonthYearPicker (3.0.0)
+  - ObjectMapper (3.5.1)
+  - RIBs (0.9.1):
+    - RxSwift (~> 4.0)
+  - RxCocoa (4.5.0):
+    - RxSwift (>= 4.4.2, ~> 4.4)
+  - RxDataSources (3.1.0):
+    - Differentiator (~> 3.0)
+    - RxCocoa (~> 4.0)
+    - RxSwift (~> 4.0)
+  - RxSwift (4.5.0)
+  - RxWebKit (0.3.7):
+    - RxCocoa (~> 4.0)
+    - RxSwift (~> 4.0)
+  - SnapKit (5.0.1)
+  - SwiftyJSON (5.0.0)
+
+DEPENDENCIES:
+  - Alamofire
+  - Kingfisher
+  - MonthYearPicker
+  - ObjectMapper
+  - RIBs
+  - RxCocoa
+  - RxDataSources
+  - RxSwift
+  - RxWebKit
+  - SnapKit
+  - SwiftyJSON
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - Differentiator
+    - Kingfisher
+    - MonthYearPicker
+    - ObjectMapper
+    - RIBs
+    - RxCocoa
+    - RxDataSources
+    - RxSwift
+    - RxWebKit
+    - SnapKit
+    - SwiftyJSON
+
+SPEC CHECKSUMS:
+  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
+  Differentiator: be49ca3408f0ecfc761e4c7763d20c62be01b9ad
+  Kingfisher: 4569606189149e19c7d9439f47e885d0679b7a90
+  MonthYearPicker: 59cfa26c5bfbbc52ef147360d9846c349f578991
+  ObjectMapper: 70187b8941977c62ccfb423caf6b50be405cabf0
+  RIBs: 879184fbca567425c488d6b3d14a9c5abfbf9d47
+  RxCocoa: cbf70265dc65a981d4ac982e513c10cf23df24a0
+  RxDataSources: a843bad90c29817f5923ec8163f4af2de084ceb3
+  RxSwift: f172070dfd1a93d70a9ab97a5a01166206e1c575
+  RxWebKit: e39e220919e5e24546c837f5f60689036a1e5920
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
+
+PODFILE CHECKSUM: bb833771da3abdf384177f875d904086f65c8d50
+
+COCOAPODS: 1.8.3

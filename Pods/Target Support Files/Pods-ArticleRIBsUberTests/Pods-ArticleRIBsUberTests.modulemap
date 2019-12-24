@@ -1,0 +1,6 @@
+framework module Pods_ArticleRIBsUberTests {
+  umbrella header "Pods-ArticleRIBsUberTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
