@@ -19,19 +19,19 @@ protocol DatePickerPresentable: Presentable {
 }
 
 protocol DatePickerListener: class {
+    //select date done
     func didSelectDate(date: Date?)
-    // TODO: Declare methods the interactor can invoke to communicate with other RIBs.
 }
 
 final class DatePickerInteractor: PresentableInteractor<DatePickerPresentable>, DatePickerInteractable, DatePickerPresentableListener {
+    
+    weak var router: DatePickerRouting?
+    weak var listener: DatePickerListener?
     
     func onSelectDate(date: Date?) {
         self.listener?.didSelectDate(date: date)
     }
     
-    weak var router: DatePickerRouting?
-    weak var listener: DatePickerListener?
-
     // TODO: Add additional dependencies to constructor. Do not perform any logic
     // in constructor.
     override init(presenter: DatePickerPresentable) {

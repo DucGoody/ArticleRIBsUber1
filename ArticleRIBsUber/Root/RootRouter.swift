@@ -34,6 +34,7 @@ final class RootRouter: LaunchRouter<RootInteractable, RootViewControllable>, Ro
         self.routeToHome()
     }
     
+    //chuyển sang màn hình home
     private func routeToHome() {
         let home = homeBuildable.build(withListener: interactor)
         attachChild(home)

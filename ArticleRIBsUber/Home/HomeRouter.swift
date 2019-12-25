@@ -14,18 +14,11 @@ protocol HomeInteractable: Interactable, DetailListener, DatePickerListener, Sea
 }
 
 protocol HomeViewControllable: ViewControllable {
+    //chuyển sang màn hình mới
     func replaceModal(vc: ViewControllable?, isPresent: Bool)
-    // TODO: Declare methods the router invokes to manipulate the view hierarchy.
 }
 
 final class HomeRouter: ViewableRouter<HomeInteractable, HomeViewControllable>, HomeRouting {
-    
-    func gotoSearch() {
-        let detail = searchBuildable.build(withListener: interactor)
-        attachChild(detail)
-        currentChild = detail
-        viewController.replaceModal(vc: detail.viewControllable, isPresent: false)
-    }
     
     private let detailBuildable: DetailBuildable
     private let searchBuildable: SearchBuildable
@@ -45,6 +38,15 @@ final class HomeRouter: ViewableRouter<HomeInteractable, HomeViewControllable>, 
         interactor.router = self
     }
     
+    //chuyển sang màn hình tìm kiếm
+    func gotoSearch() {
+        let detail = searchBuildable.build(withListener: interactor)
+        attachChild(detail)
+        currentChild = detail
+        viewController.replaceModal(vc: detail.viewControllable, isPresent: false)
+    }
+    
+    //chuyển sang màn hình chi tiết
     func rotuteToDetail(url: URL) {
         let detail = detailBuildable.build(withListener: interactor, url: url)
         attachChild(detail)
@@ -52,6 +54,7 @@ final class HomeRouter: ViewableRouter<HomeInteractable, HomeViewControllable>, 
         viewController.replaceModal(vc: detail.viewControllable, isPresent: false)
     }
     
+    // chuyển sang popup show date
     func rotuteToShowDate(viewInput: UIView, date: Date) {
         let dateBuildable = datePickerBuildable.build(withListener: interactor, inputView: viewInput, dateSelected: date)
         attachChild(dateBuildable)
@@ -59,6 +62,7 @@ final class HomeRouter: ViewableRouter<HomeInteractable, HomeViewControllable>, 
         viewController.replaceModal(vc: dateBuildable.viewControllable, isPresent: true)
     }
     
+    // close current view
     func cleanupViews() {
         viewController.replaceModal(vc: nil, isPresent: false)
     }

@@ -44,8 +44,4 @@ final class DetailViewController: UIViewController, DetailPresentable, DetailVie
         let request = URLRequest.init(url: url)
         webView.load(request)
     }
-    
-//    func loadURL(url: URL) {
-//        webView.load(URLRequest.init(url: url))
-//    }
 }

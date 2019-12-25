@@ -11,13 +11,15 @@ import RxSwift
 import RxCocoa
 
 protocol SearchRouting: ViewableRouting {
+    // chuyển sang màn hình chi tiết
     func rotuteToDetail(url: URL)
-    // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
 }
 
 protocol SearchPresentable: Presentable {
     var listener: SearchPresentableListener? { get set }
+    // result khi search
     var result: BehaviorRelay<[DocsSection]> {get set}
+    //load data done
     func loadDataDone()
     
     // TODO: Declare methods the interactor can invoke the presenter to present data.
@@ -29,14 +31,6 @@ protocol SearchListener: class {
 }
 
 final class SearchInteractor: PresentableInteractor<SearchPresentable>, SearchInteractable, SearchPresentableListener {
-    
-    func didClickItem(url: URL) {
-        router?.rotuteToDetail(url: url)
-    }
-    
-    func closeViewController() {
-        self.listener?.closeSearchViewController()
-    }
     
     var param: BehaviorRelay<ParamSearchArticles>
     weak var router: SearchRouting?
@@ -59,6 +53,17 @@ final class SearchInteractor: PresentableInteractor<SearchPresentable>, SearchIn
         searchArticles()
     }
     
+    // chọn item
+    func didClickItem(url: URL) {
+        router?.rotuteToDetail(url: url)
+    }
+    
+    // close viewcontroller
+    func closeViewController() {
+        self.listener?.closeSearchViewController()
+    }
+    
+    // search articels
     func searchArticles() {
         self.param.asObservable().subscribe(onNext: { (param) in
             if param.keyword.count <= 0 || param.keyword.isEmpty {return}
@@ -70,6 +75,7 @@ final class SearchInteractor: PresentableInteractor<SearchPresentable>, SearchIn
         }).disposed(by: bag)
     }
     
+    //get data -> add item load more
     func getData(data: [DocsEntity], pageIndex: Int) {
         self.queue.sync {
             self.group.enter()

@@ -37,12 +37,4 @@ final class DatePickerBuilder: Builder<DatePickerDependency>, DatePickerBuildabl
         interactor.listener = listener
         return DatePickerRouter(interactor: interactor, viewController: viewController)
     }
-
-//    func build(withListener listener: DatePickerListener) -> DatePickerRouting {
-//        let component = DatePickerComponent(dependency: dependency)
-//        let viewController = DatePickerViewController()
-//        let interactor = DatePickerInteractor(presenter: viewController)
-//        interactor.listener = listener
-//        return DatePickerRouter(interactor: interactor, viewController: viewController)
-//    }
 }

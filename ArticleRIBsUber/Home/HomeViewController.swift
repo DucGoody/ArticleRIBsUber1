@@ -24,18 +24,7 @@ protocol HomePresentableListener: class {
 }
 
 final class HomeViewController: UIViewController, HomePresentable, HomeViewControllable {
-    
-    func updateView(_ date: Date) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        let dateString = formatter.string(from: date)
-        dateLabel.text = dateString
-    }
-    
-    func loadDataDone(_ isDone: Bool) {
-        indicator.isHidden = isDone
-    }
-    
+        
     @IBOutlet weak var dateButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var dateView: UIView!
@@ -68,8 +57,18 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         onClickItem()
     }
     
+    func updateView(_ date: Date) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+        let dateString = formatter.string(from: date)
+        dateLabel.text = dateString
+    }
+    
+    func loadDataDone(_ isDone: Bool) {
+        indicator.isHidden = isDone
+    }
+    
     func initUI() {
-        
         tableView.register(UINib.init(nibName: articleCellName, bundle: nil), forCellReuseIdentifier: articleCellName)
         tableView.showsVerticalScrollIndicator = false
         tableView.separatorColor = .clear
@@ -93,14 +92,17 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         }).disposed(by: bag)
     }
     
+    //click button search
     @objc func clickRightNavigation() {
         self.listener?.gotoSearch()
     }
     
+    //bin data tableView
     func binData() {
         result?.asObservable().bind(to: tableView.rx.items(dataSource: dataSource())).disposed(by: bag)
     }
     
+    //onClick item
     func onClickItem() {
         tableView.rx.modelSelected(DocsEntity.self).throttle(1, scheduler: MainScheduler.instance).subscribe(onNext: {[unowned self] entity in
             guard let url = URL.init(string: entity.webUrl) else {return}
@@ -117,8 +119,9 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         return UITableViewCell()
     }
     
+    // replace viewcontroller
     func replaceModal(vc: ViewControllable?, isPresent: Bool) {
-        guard let vc = vc else {
+        guard let vc = vc else { // == nil
             if presentedViewController != nil {
                 dismiss(animated: true, completion: nil)
             } else {
@@ -126,6 +129,7 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
             }
             return
         }
+        // present hay k
         if isPresent {
             vc.uiviewController.modalPresentationStyle = .overCurrentContext
             self.present(vc.uiviewController, animated: false, completion: nil)

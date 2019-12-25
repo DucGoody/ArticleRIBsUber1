@@ -17,16 +17,18 @@ protocol RootPresentableListener: class {
 }
 
 final class RootViewController: UIViewController, RootPresentable, RootViewControllable {
+    
+    weak var listener: RootPresentableListener?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
     func replaceModal(vc: ViewControllable?) {
         if let vc = vc {
             vc.uiviewController.modalPresentationStyle = .overCurrentContext
             self.present(vc.uiviewController, animated: false, completion: nil)
         }
-    }
-    weak var listener: RootPresentableListener?
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
     }
 }
 

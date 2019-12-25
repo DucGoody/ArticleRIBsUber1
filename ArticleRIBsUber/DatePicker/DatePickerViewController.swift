@@ -22,10 +22,10 @@ final class DatePickerViewController: UIViewController, DatePickerPresentable, D
     private var dateContentView: UIView!
     private var doneButton: UIButton!
     private var picker: MonthYearPickerView!
+    
     private let bag = DisposeBag()
     private var viewInput: UIView = UIView()
     private var dateSelected: Date = Date()
-    
     weak var listener: DatePickerPresentableListener?
     
     init(dateSelected: Date, viewInput: UIView) {
@@ -43,6 +43,7 @@ final class DatePickerViewController: UIViewController, DatePickerPresentable, D
         initUI()
     }
     
+    //init ui
     func initUI() {
         let originY = self.viewInput.frame.origin.y + viewInput.frame.size.height
         dateContentView = UIView()

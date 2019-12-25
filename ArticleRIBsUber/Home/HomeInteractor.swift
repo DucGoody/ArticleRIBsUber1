@@ -31,15 +31,7 @@ protocol HomeListener: class {
 }
 
 final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteractable, HomePresentableListener {
-    
-    func closeSearchViewController() {
-        router?.cleanupViews()
-    }
-    
-    func gotoSearch() {
-        self.router?.gotoSearch()
-    }
-    
+
     var param: BehaviorRelay<Date>
     weak var router: HomeRouting?
     weak var listener: HomeListener?
@@ -53,12 +45,23 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
         presenter.listener = self
     }
     
+    // close current viewcontroll
+    func closeSearchViewController() {
+        router?.cleanupViews()
+    }
+    
+    // chuyển sang màn hình tìm kiếm
+    func gotoSearch() {
+        self.router?.gotoSearch()
+    }
+    
     override func didBecomeActive() {
         super.didBecomeActive()
         getLatestArticles()
         // TODO: Implement business logic here.
     }
     
+    // did select date
     func didSelectDate(date: Date?) {
         router?.cleanupViews()
         if let date = date {
@@ -68,6 +71,7 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
         }
     }
     
+    //get all articel
     func getLatestArticles() {
         self.param.subscribe(onNext: { (date) in
             ServiceController().getLatestArticles(date: date) { (response) in
@@ -81,10 +85,12 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
         }).disposed(by: bag)
     }
     
+    //chuyển sang màn hình chi tiết
     func didClickItem(url: URL) {
         router?.rotuteToDetail(url: url)
     }
     
+    // chuyển sang màn hình chọn ngày
     func didShowDate(viewInput: UIView, date: Date) {
         router?.rotuteToShowDate(viewInput: viewInput, date: date)
     }

@@ -14,32 +14,30 @@ import RxDataSources
 import UIKit
 
 protocol SearchPresentableListener: class {
-    // TODO: Declare properties and methods that the view controller can invoke to perform
-    // business logic, such as signIn(). This protocol is implemented by the corresponding
-    // interactor class.
+    //param search
     var param: BehaviorRelay<ParamSearchArticles>{get set}
+    //action click item
     func didClickItem(url: URL)
+    // close viewcontroller
     func closeViewController()
 }
 
 final class SearchViewController: UIViewController, SearchPresentable, SearchViewControllable {
-    var result: BehaviorRelay<[DocsSection]>
     
-    func loadDataDone() {
-        refreshControl.endRefreshing()
-        indicator.isHidden = true
-    }
 
     @IBOutlet weak var tableView: UITableView!
-    weak var listener: SearchPresentableListener?
     @IBOutlet weak var searchTextField: UITextField!
     @IBOutlet weak var cancelButton: UIButton!
+    private let refreshControl = UIRefreshControl()
+    private var indicator: UIActivityIndicatorView!
+    
+    weak var listener: SearchPresentableListener?
+    var result: BehaviorRelay<[DocsSection]>
+    
     private let articleCellName: String = "ArticleCell"
     private let loadMoreCell: String = "LoadMoreCell"
     private let bag = DisposeBag()
-    private var indicator: UIActivityIndicatorView!
     private let param: ParamSearchArticles = ParamSearchArticles()
-    private let refreshControl = UIRefreshControl()
     
     init() {
         self.result = BehaviorRelay<[DocsSection]>.init(value: [])
@@ -52,7 +50,25 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        initTableView()
+        initSearchUI()
+        onClickItem()
+        binData()
+    }
+    
+    func initSearchUI() {
+        searchTextField.becomeFirstResponder()
+        searchTextField.rx.controlEvent([.editingChanged]).asObservable().throttle(1000, scheduler: MainScheduler.instance).subscribe(onNext: { [unowned self](_) in
+            self.indicator.isHidden = false
+            self.onSearch()
+        }).disposed(by: bag)
         
+        cancelButton.rx.tap.asDriver().throttle(1000).drive(onNext: { [unowned self](_) in
+            self.listener?.closeViewController()
+        }).disposed(by: bag)
+    }
+    
+    func initTableView() {
         tableView.register(UINib.init(nibName: articleCellName, bundle: nil), forCellReuseIdentifier: articleCellName)
         tableView.register(UINib.init(nibName: loadMoreCell, bundle: nil), forCellReuseIdentifier: loadMoreCell)
         tableView.separatorColor = .clear
@@ -67,16 +83,6 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
         indicator.isHidden = true
         tableView.delegate = self
         
-        searchTextField.becomeFirstResponder()
-        searchTextField.rx.controlEvent([.editingChanged]).asObservable().throttle(1000, scheduler: MainScheduler.instance).subscribe(onNext: { [unowned self](_) in
-            self.indicator.isHidden = false
-            self.onSearch()
-        }).disposed(by: bag)
-        
-        cancelButton.rx.tap.asDriver().throttle(1000).drive(onNext: { [unowned self](_) in
-            self.listener?.closeViewController()
-        }).disposed(by: bag)
-        
         if #available(iOS 10.0, *) {
             self.tableView.refreshControl = refreshControl
         } else {
@@ -84,9 +90,6 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
         }
         self.refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         self.refreshControl.tintColor = UIColor.lightGray
-    
-        onClickItem()
-        binData()
     }
     
     // action pulltorefresh
@@ -95,10 +98,12 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
         self.listener?.param.accept(param)
     }
     
+    //bin data tableVIew
     func binData() {
         result.asObservable().bind(to: tableView.rx.items(dataSource: dataSource())).disposed(by: bag)
     }
     
+    //click item tableView
     func onClickItem() {
         tableView.rx.modelSelected(DocsEntity.self).throttle(1, scheduler: MainScheduler.instance).subscribe(onNext: {[unowned self] entity in
             guard let url = URL.init(string: entity.webUrl) else {return}
@@ -106,6 +111,8 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
         }).disposed(by: bag)
     }
     
+    
+    //action enter text search
     func onSearch() {
         if let text = searchTextField.text, !text.isEmpty, text.count > 0 {
             param.keyword = text
@@ -130,6 +137,12 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
             return cell
         }
         return UITableViewCell()
+    }
+    
+    //load data done
+    func loadDataDone() {
+        refreshControl.endRefreshing()
+        indicator.isHidden = true
     }
 }
 
