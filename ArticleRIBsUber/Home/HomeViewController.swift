@@ -38,7 +38,7 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
     private var dateSelect: Date = Date()
     
     init() {
-        self.result = BehaviorRelay<[DocsSection]>.init(value: [])
+        result = BehaviorRelay<[DocsSection]>.init(value: [])
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -48,9 +48,9 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = "New Youk Times"
+        navigationItem.title = "New Youk Times"
         let imageSearch = UIImage.init(named: "ic_search")?.withRenderingMode(.alwaysOriginal)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(image: imageSearch, style: .plain, target: self, action:#selector(clickRightNavigation))
+        navigationItem.rightBarButtonItem = UIBarButtonItem.init(image: imageSearch, style: .plain, target: self, action:#selector(clickRightNavigation))
         
         initUI()
         binData()
@@ -75,9 +75,9 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         tableView.backgroundColor = .systemGroupedBackground
         
         indicator = UIActivityIndicatorView.init()
-        self.view.addSubview(indicator)
+        view.addSubview(indicator)
         indicator.snp.makeConstraints { (tbl) in
-            tbl.center.equalTo(self.view)
+            tbl.center.equalTo(view)
         }
         indicator.startAnimating()
         
@@ -85,26 +85,35 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         dateView.layer.borderWidth = 0.5
         dateView.layer.borderColor = UIColor.gray.cgColor
         
-        self.dateButton.rx.tap.asDriver()
+        dateButton.rx.tap.asDriver()
         .throttle(1000)
         .drive(onNext: { [unowned self] (_) in
-             self.listener?.didShowDate(viewInput: self.dateView, date: self.dateSelect)
+            self.listener?.didShowDate(viewInput: self.dateView, date: self.dateSelect)
         }).disposed(by: bag)
     }
     
     //click button search
     @objc func clickRightNavigation() {
-        self.listener?.gotoSearch()
+        listener?.gotoSearch()
     }
     
     //bin data tableView
     func binData() {
-        result?.asObservable().bind(to: tableView.rx.items(dataSource: dataSource())).disposed(by: bag)
+        let datasource = RxTableViewSectionedReloadDataSource<DocsSection>(
+            configureCell: { [unowned self] dataSource, table, indexPath, item in
+                if let item = item as? DocsEntity {
+                    return self.getArticlesCell(item: item)
+                }
+               return UITableViewCell()
+        })
+        result?.asObservable().bind(to: tableView.rx.items(dataSource: datasource)).disposed(by: bag)
     }
     
     //onClick item
     func onClickItem() {
-        tableView.rx.modelSelected(DocsEntity.self).throttle(1, scheduler: MainScheduler.instance).subscribe(onNext: {[unowned self] entity in
+        tableView.rx.modelSelected(DocsEntity.self)
+            .throttle(1, scheduler: MainScheduler.instance)
+            .subscribe(onNext: {[unowned self] entity in
             guard let webUrl = entity.webUrl, let url = URL.init(string: webUrl) else {return}
             self.listener?.didClickItem(url: url)
         }).disposed(by: bag)
@@ -112,7 +121,7 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
     
     // get cell article
     func getArticlesCell(item: DocsEntity) -> UITableViewCell {
-        if let cell = self.tableView.dequeueReusableCell(withIdentifier: articleCellName) as? ArticleCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: articleCellName) as? ArticleCell {
             cell.binData(docs: item)
             return cell
         }
@@ -132,26 +141,12 @@ final class HomeViewController: UIViewController, HomePresentable, HomeViewContr
         // present hay k
         if isPresent {
             vc.uiviewController.modalPresentationStyle = .overCurrentContext
-            self.present(vc.uiviewController, animated: false, completion: nil)
+            present(vc.uiviewController, animated: false, completion: nil)
         } else {
-            self.navigationController?.pushViewController(vc.uiviewController, animated: true)
+            navigationController?.pushViewController(vc.uiviewController, animated: true)
         }
     }
 }
-
-extension HomeViewController {
-    //init data source
-    func dataSource() -> RxTableViewSectionedReloadDataSource<DocsSection> {
-        return RxTableViewSectionedReloadDataSource<DocsSection>(
-            configureCell: { dataSource, table, indexPath, item in
-                if let item = item as? DocsEntity {
-                    return self.getArticlesCell(item: item)
-                }
-               return UITableViewCell()
-        })
-    }
-}
-
 
 struct DocsSection {
     var items: [Any]

@@ -71,7 +71,7 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
     
     //get all articel
     func getLatestArticles() {
-        self.param.subscribe(onNext: { (date) in
+        param.subscribe(onNext: { (date) in
             ServiceController().getLatestArticles(date: date) { [unowned self](response) in
                 self.presenter.loadDataDone(true)
                 guard let docs = response?.response?.docs else {

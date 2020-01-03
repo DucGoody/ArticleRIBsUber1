@@ -60,12 +60,12 @@ final class SearchInteractor: PresentableInteractor<SearchPresentable>, SearchIn
     
     // close viewcontroller
     func closeViewController() {
-        self.listener?.closeSearchViewController()
+        listener?.closeSearchViewController()
     }
     
     // search articels
     func searchArticles() {
-        self.param.asObservable().subscribe(onNext: { (param) in
+        param.asObservable().subscribe(onNext: { (param) in
             if param.keyword.count <= 0 || param.keyword.isEmpty {return}
             ServiceController().searchArticles(keyword: param.keyword, page: param.pageIndex) { [unowned self] (data) in
                 self.presenter.loadDataDone()
@@ -77,25 +77,25 @@ final class SearchInteractor: PresentableInteractor<SearchPresentable>, SearchIn
     
     //get data -> add item load more
     func getData(data: [DocsEntity], pageIndex: Int) {
-        self.queue.sync {
-            self.group.enter()
+        queue.sync {
+            group.enter()
             
-            if pageIndex == 0 { self.listData.removeAll() }
+            if pageIndex == 0 { listData.removeAll() }
             
             let itemLoadMore: String = "loadmore"
-            if let item = self.listData.last as? String, item.elementsEqual(itemLoadMore) {
-                self.listData.removeLast()
+            if let item = listData.last as? String, item.elementsEqual(itemLoadMore) {
+                listData.removeLast()
             }
             
-            self.listData.append(contentsOf: data)
+            listData.append(contentsOf: data)
             
             if data.count >= 10 {
-                self.listData.append(itemLoadMore)
+                listData.append(itemLoadMore)
             }
-            self.group.leave()
+            group.leave()
         }
         
-        self.group.notify(queue: .main) {
+        group.notify(queue: .main) {
             let oneSection = DocsSection(items: self.listData)
             self.presenter.result.accept([oneSection])
         }

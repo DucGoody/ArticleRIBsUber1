@@ -36,10 +36,10 @@ final class DetailViewController: UIViewController, DetailPresentable, DetailVie
         super.viewDidLoad()
         
         webView = WKWebView()
-        self.view.addSubview(webView)
+        view.addSubview(webView)
         
         webView.snp.makeConstraints { (web) in
-            web.top.leading.trailing.bottom.equalTo(self.view)
+            web.top.leading.trailing.bottom.equalTo(view)
         }
         let request = URLRequest.init(url: url)
         webView.load(request)

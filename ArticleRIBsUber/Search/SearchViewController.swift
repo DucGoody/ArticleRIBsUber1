@@ -40,7 +40,7 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
     private let param: ParamSearchArticles = ParamSearchArticles()
     
     init() {
-        self.result = BehaviorRelay<[DocsSection]>.init(value: [])
+        result = BehaviorRelay<[DocsSection]>.init(value: [])
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -58,7 +58,9 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
     
     func initSearchUI() {
         searchTextField.becomeFirstResponder()
-        searchTextField.rx.controlEvent([.editingChanged]).asObservable().throttle(1000, scheduler: MainScheduler.instance).subscribe(onNext: { [unowned self](_) in
+        searchTextField.rx.controlEvent([.editingChanged]).asObservable()
+            .throttle(1000, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [unowned self](_) in
             self.indicator.isHidden = false
             self.onSearch()
         }).disposed(by: bag)
@@ -100,7 +102,15 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
     
     //bin data tableVIew
     func binData() {
-        result.asObservable().bind(to: tableView.rx.items(dataSource: dataSource())).disposed(by: bag)
+        let datasource = RxTableViewSectionedReloadDataSource<DocsSection>(
+            configureCell: { [unowned self] dataSource, table, indexPath, item in
+                if let item = item as? DocsEntity {
+                    return self.getArticlesCell(item: item)
+                } else {
+                    return self.getLoadMoreCell()
+                }
+        })
+        result.asObservable().bind(to: tableView.rx.items(dataSource: datasource)).disposed(by: bag)
     }
     
     //click item tableView
@@ -125,7 +135,7 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
     
     // get cell article
     func getArticlesCell(item: DocsEntity) -> UITableViewCell {
-        if let cell = self.tableView.dequeueReusableCell(withIdentifier: articleCellName) as? ArticleCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: articleCellName) as? ArticleCell {
             cell.binData(docs: item)
             return cell
         }
@@ -134,7 +144,7 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
     
     //get cell load more
     func getLoadMoreCell() -> UITableViewCell {
-        if let cell = self.tableView.dequeueReusableCell(withIdentifier: loadMoreCell) as? LoadMoreCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: loadMoreCell) as? LoadMoreCell {
             cell.indicator.startAnimating()
             return cell
         }
@@ -154,23 +164,12 @@ extension SearchViewController : UITableViewDelegate {
         let arrCellName = NSStringFromClass(cell.classForCoder).components(separatedBy: ".")
         if loadMoreCell.elementsEqual(arrCellName.last ?? "") {
             param.pageIndex += 1
-            self.listener?.param.accept(param)
+            listener?.param.accept(param)
         }
     }
 }
 
 extension SearchViewController {
-    //init data source
-    func dataSource() -> RxTableViewSectionedReloadDataSource<DocsSection> {
-        return RxTableViewSectionedReloadDataSource<DocsSection>(
-            configureCell: { dataSource, table, indexPath, item in
-                if let item = item as? DocsEntity {
-                    return self.getArticlesCell(item: item)
-                } else {
-                    return self.getLoadMoreCell()
-                }
-        })
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

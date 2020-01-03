@@ -27,7 +27,7 @@ final class RootViewController: UIViewController, RootPresentable, RootViewContr
     func replaceModal(vc: ViewControllable?) {
         if let vc = vc {
             vc.uiviewController.modalPresentationStyle = .overCurrentContext
-            self.present(vc.uiviewController, animated: false, completion: nil)
+            present(vc.uiviewController, animated: false, completion: nil)
         }
     }
 }

@@ -29,7 +29,7 @@ final class DatePickerInteractor: PresentableInteractor<DatePickerPresentable>, 
     weak var listener: DatePickerListener?
     
     func onSelectDate(date: Date?) {
-        self.listener?.didSelectDate(date: date)
+        listener?.didSelectDate(date: date)
     }
     
     // TODO: Add additional dependencies to constructor. Do not perform any logic

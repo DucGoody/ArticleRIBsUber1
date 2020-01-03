@@ -31,7 +31,7 @@ final class RootRouter: LaunchRouter<RootInteractable, RootViewControllable>, Ro
     
     override func didLoad() {
         super.didLoad()
-        self.routeToHome()
+        routeToHome()
     }
     
     //chuyển sang màn hình home
