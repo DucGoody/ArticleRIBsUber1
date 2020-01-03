@@ -15,7 +15,6 @@ protocol HomeRouting: ViewableRouting {
     func rotuteToDetail(url: URL)
     func rotuteToShowDate(viewInput: UIView, date: Date)
     func gotoSearch()
-    // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
 }
 
 protocol HomePresentable: Presentable {
@@ -23,7 +22,6 @@ protocol HomePresentable: Presentable {
     var result: BehaviorRelay<[DocsSection]>? {get set}
     func updateView(_ date: Date)
     func loadDataDone(_ isDone: Bool)
-    // TODO: Declare methods the interactor can invoke the presenter to present data.
 }
 
 protocol HomeListener: class {
@@ -74,9 +72,9 @@ final class HomeInteractor: PresentableInteractor<HomePresentable>, HomeInteract
     //get all articel
     func getLatestArticles() {
         self.param.subscribe(onNext: { (date) in
-            ServiceController().getLatestArticles(date: date) { (response) in
+            ServiceController().getLatestArticles(date: date) { [unowned self](response) in
                 self.presenter.loadDataDone(true)
-                guard let docs = response?.response.docs else {
+                guard let docs = response?.response?.docs else {
                     return
                 }
                 let section = DocsSection(items: docs)

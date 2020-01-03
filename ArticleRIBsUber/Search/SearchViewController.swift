@@ -105,12 +105,14 @@ final class SearchViewController: UIViewController, SearchPresentable, SearchVie
     
     //click item tableView
     func onClickItem() {
-        tableView.rx.modelSelected(DocsEntity.self).throttle(1, scheduler: MainScheduler.instance).subscribe(onNext: {[unowned self] entity in
-            guard let url = URL.init(string: entity.webUrl) else {return}
+        tableView.rx.modelSelected(DocsEntity.self)
+            .throttle(1, scheduler: MainScheduler.instance)
+            .subscribe(onNext: {[unowned self] entity in
+            guard let webUrl = entity.webUrl,
+                let url = URL.init(string: webUrl) else {return}
             self.listener?.didClickItem(url: url)
         }).disposed(by: bag)
     }
-    
     
     //action enter text search
     func onSearch() {

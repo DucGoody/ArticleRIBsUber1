@@ -10,22 +10,21 @@ import UIKit
 import ObjectMapper
 
 class MultimediaEntity: Mappable {
-    var rank: Int = 0
-    var subtype: String = ""
-    var caption: String = ""
-    var credit: String = ""
-    var type:String = ""
-    var url: String = ""
-    var height:Double = 0.0
-    var width: Double = 0.0
-    var legacy: Legacy!
-    var subType: String = ""
-    var cropName: String = ""
+    var rank: Int = -1
+    var subtype: String?
+    var caption: String?
+    var credit: String?
+    var type:String?
+    var url: String?
+    var height:Double = -1
+    var width: Double = -1
+    var legacy: Legacy?
+    var subType: String?
+    var cropName: String?
     
     required init?(map: Map) {
         mapping(map: map)
     }
-    
     
     func mapping(map: Map) {
         cropName <- map["crop_name"]
@@ -41,19 +40,16 @@ class MultimediaEntity: Mappable {
         subType <- map["subType"]
         cropName <- map["crop_name"]
     }
-
 }
 
 class Legacy: Mappable {
-    var xlarge: String = ""
-    var xlargewidth:Double = 0.0
-    var xlargeheight: Double = 0.0
-    
+    var xlarge: String?
+    var xlargewidth:Double = -1
+    var xlargeheight: Double = -1
     
     required init?(map: Map) {
         mapping(map: map)
     }
-    
     
     func mapping(map: Map) {
         xlarge <- map["xlarge"]

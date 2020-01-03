@@ -11,8 +11,8 @@ import ObjectMapper
 
 struct ResponseArticleLatest: Mappable {
     
-    var copyright: String = ""
-    var response: ResponseDetailArticleLatest!
+    var copyright: String?
+    var response: ResponseDetailArticleLatest?
     
     init?(map: Map) {
         mapping(map: map)
@@ -26,8 +26,8 @@ struct ResponseArticleLatest: Mappable {
 
 
 class ResponseDetailArticleLatest: Mappable {
-    var meta: Meta!
-    var docs:[DocsEntity] = []
+    var meta: Meta?
+    var docs:[DocsEntity]?
     
     required init?(map: Map) {
         mapping(map: map)
@@ -40,7 +40,7 @@ class ResponseDetailArticleLatest: Mappable {
 }
 
 class Meta: Mappable {
-    var hits: Int = 0
+    var hits: Int = -1
     required init?(map: Map) {
         mapping(map: map)
     }

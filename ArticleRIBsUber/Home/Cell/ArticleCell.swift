@@ -25,15 +25,16 @@ class ArticleCell: UITableViewCell {
     }
     
     func binData(docs: DocsEntity) {
-        self.nameLabel.text = docs.headline.main
-        self.nameLabel.text = self.convertDateToString(date: docs.pubDate)
-        self.descriptionLabel.text = docs.snippet
+        nameLabel.text = docs.headline?.main
+        nameLabel.text = convertDateToString(date: docs.pubDate ?? Date())
+        descriptionLabel.text = docs.snippet
         
         //load image
-        if docs.multimedia.count > 0 {
-            var urlString = docs.multimedia[0].url
-            urlString = "https://www.nytimes.com/\(urlString)"
-            self.articleImageView.setImage(urlString)
+        if let multimedia = docs.multimedia,
+            multimedia.count > 0,
+            let urlString = multimedia[0].url
+            {
+            articleImageView.setImage("https://www.nytimes.com/\(urlString)")
         }
     }
     
@@ -49,7 +50,6 @@ class ArticleCell: UITableViewCell {
 }
 
 extension UIImageView {
-    
     func setImage(_ urlString: String) {
         if let url = URL(string: urlString){
             let placeholder = UIImage(named: "ic_default_article")

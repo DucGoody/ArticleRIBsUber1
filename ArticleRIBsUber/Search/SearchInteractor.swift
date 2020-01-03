@@ -69,7 +69,7 @@ final class SearchInteractor: PresentableInteractor<SearchPresentable>, SearchIn
             if param.keyword.count <= 0 || param.keyword.isEmpty {return}
             ServiceController().searchArticles(keyword: param.keyword, page: param.pageIndex) { [unowned self] (data) in
                 self.presenter.loadDataDone()
-                guard let value = data?.response.docs else {return}
+                guard let value = data?.response?.docs else {return}
                 self.getData(data: value, pageIndex: param.pageIndex)
             }
         }).disposed(by: bag)
